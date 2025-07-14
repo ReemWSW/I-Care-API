@@ -8,13 +8,14 @@ const nextConfig: NextConfig = {
       
       {
         protocol: 'http',
-        hostname: 'localhost',
-        port: '5000', // ระบุ port ของ API ของคุณ
+        hostname: 'https://icareapp1-0-0dfz.onrender.com/',
+        port: '', // ระบุ port ของ API ของคุณ
         pathname: '/uploads/**', // อนุญาตทุก path ที่อยู่ใต้ /uploads
       },
     ],
   },
 };
+
 
 
 export default nextConfig;

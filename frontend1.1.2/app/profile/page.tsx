@@ -459,7 +459,8 @@ export default function ProfilePage() {
       {/* Profile Image Section */}
       <div className="flex flex-col items-center p-6 mb-8 bg-gray-50 rounded-lg">
         <Image
-          src={previewImage || user.profileImageUrl || '/default-avatar.png'}
+          // src={previewImage || user.profileImageUrl || '/default-avatar.png'}
+          src={user.profileImageUrl ? `${API_BASE_URL}${user.profileImageUrl}` : 'https://via.placeholder.com/150'}
           alt="Profile Picture"
           width={150}
           height={150}
