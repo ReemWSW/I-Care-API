@@ -25,7 +25,20 @@ const disconnectPrisma = async () => {
   }
 };
 
+const testDatabaseConnection = async () => {
+  try {
+    const client = getPrismaClient();
+    await client.$connect();
+    console.log('✅ Database connection successful');
+    return true;
+  } catch (error) {
+    console.error('❌ Database connection failed:', error.message);
+    return false;
+  }
+};
+
 module.exports = {
   getPrismaClient,
   disconnectPrisma,
+  testDatabaseConnection,
 };

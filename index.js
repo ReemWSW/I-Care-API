@@ -7,6 +7,7 @@ const swaggerSpec = require('./src/config/swagger');
 const authRoutes = require('./src/routes/authRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 const { errorHandler, notFound } = require('./src/middlewares/errorMiddleware');
+const { testDatabaseConnection } = require('./src/config/database');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -50,6 +51,12 @@ app.get('/health', (req, res) => {
 // app.use(notFound);
 // app.use(errorHandler);
 
-app.listen(PORT, HOST, () => {
-  console.log(`Server is running on http://${HOST}:${PORT}`);
-});
+const startServer = async () => {
+  await testDatabaseConnection();
+  
+  app.listen(PORT, HOST, () => {
+    console.log(`Server is running on http://${HOST}:${PORT}`);
+  });
+};
+
+startServer();
