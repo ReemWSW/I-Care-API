@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./src/config/swagger');
 const authRoutes = require('./src/routes/authRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 const { errorHandler, notFound } = require('./src/middlewares/errorMiddleware');
@@ -24,13 +26,29 @@ app.use(express.urlencoded({ extended: true }));
 // Static file serving
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
+// Swagger documentation
+try {
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+} catch (error) {
+  console.error('Swagger setup error:', error);
+}
 
-// Error handling middleware (must be last)
-app.use(notFound);
-app.use(errorHandler);
+// Test route
+app.get('/', (req, res) => {
+  res.json({ message: 'I-Care API is running' });
+});
+
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
+// Routes (temporarily commented out for debugging)
+// app.use('/api/auth', authRoutes);
+// app.use('/api/users', userRoutes);
+
+// Error handling middleware (temporarily commented out for debugging)
+// app.use(notFound);
+// app.use(errorHandler);
 
 app.listen(PORT, HOST, () => {
   console.log(`Server is running on http://${HOST}:${PORT}`);
