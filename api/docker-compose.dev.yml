@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database (Development)
+  postgres-dev:
+    image: postgres:15-alpine
+    container_name: icare-postgres-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-icare_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-icare_password}
+      POSTGRES_DB: ${DB_NAME:-icare_db}
+    ports:
+      - "5434:5432"  # Different port to avoid conflicts
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    networks:
+      - icare-dev-network
+
+  # API Service (Development)
+  api-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: icare-api-dev
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8080}:5000"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://${DB_USER:-icare_user}:${DB_PASSWORD:-icare_password}@postgres-dev:5432/${DB_NAME:-icare_db}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_key}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      API_BASE_URL: ${API_BASE_URL:-http://localhost:5000}
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - uploads_dev_data:/app/uploads
+    depends_on:
+      - postgres-dev
+    networks:
+      - icare-dev-network
+
+volumes:
+  postgres_dev_data:
+  uploads_dev_data:
+
+networks:
+  icare-dev-network:
+    driver: bridge
